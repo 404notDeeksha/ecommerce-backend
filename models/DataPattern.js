@@ -5,7 +5,6 @@ const dataSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: false,
     },
     email: {
       type: String,
@@ -15,7 +14,6 @@ const dataSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      unique: false,
     },
     visitHistory: [],
   },
