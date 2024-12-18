@@ -1,6 +1,6 @@
 const dataSchema = require("../models/DataPattern");
 
-// /signup
+// /signup - create user account
 const handleCreateUser = async (req, res) => {
   const { name, email, password } = req.body;
   // console.log("name", name, email, password);
@@ -27,8 +27,10 @@ const handleCreateUser = async (req, res) => {
 // /signin - user is registered or not
 const handleGetUser = async (req, res) => {
   const { email } = req.body;
-  // console.log("email", email);
+  console.log("email", email);
+
   const user = await dataSchema.find({ email });
+  console.log(user);
 
   if (!user) {
     return res
@@ -46,12 +48,15 @@ const handleGetUser = async (req, res) => {
   return res.status(201).json(result);
 };
 
+
 // /create - check if user already registered
 const handleGetUserPresentAlready = async (req, res) => {
   const { email } = req.body;
   // console.log(email);
+
   const [user] = await dataSchema.find({ email: email });
   // console.log(user);
+
   if (user) {
     return res
       .status(201)
@@ -64,7 +69,9 @@ const handleGetUserPresentAlready = async (req, res) => {
 const handleGetUserCredentials = async (req, res) => {
   const { email, password } = req.body;
   // console.log("name", email, password);
+
   const [user] = await dataSchema.find({ email: email });
+
   console.log("user", user);
 
   if (!user) {
