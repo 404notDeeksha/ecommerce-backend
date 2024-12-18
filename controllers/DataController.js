@@ -46,6 +46,20 @@ const handleGetUser = async (req, res) => {
   return res.status(201).json(result);
 };
 
+// /create - check if user already registered
+const handleGetUserPresentAlready = async (req, res) => {
+  const { email } = req.body;
+  // console.log(email);
+  const [user] = await dataSchema.find({ email: email });
+  // console.log(user);
+  if (user) {
+    return res
+      .status(201)
+      .json({ message: "User Already Registered. Go to signin page" });
+  }
+  // return res.status(201).json({ result: "success" });
+};
+
 // /signin - match user credentials
 const handleGetUserCredentials = async (req, res) => {
   const { email, password } = req.body;
@@ -73,4 +87,9 @@ const handleGetUserCredentials = async (req, res) => {
   return res.status(201).json(result);
 };
 
-module.exports = { handleCreateUser, handleGetUser, handleGetUserCredentials };
+module.exports = {
+  handleCreateUser,
+  handleGetUserPresentAlready,
+  handleGetUser,
+  handleGetUserCredentials,
+};
