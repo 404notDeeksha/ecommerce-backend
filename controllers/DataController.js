@@ -1,4 +1,5 @@
 const dataSchema = require("../models/DataPattern");
+const jwt = require("jsonwebtoken");
 
 // /signup - create user account
 const handleCreateUser = async (req, res) => {
@@ -29,7 +30,7 @@ const handleGetUser = async (req, res) => {
   const { email } = req.body;
   console.log("email", email);
 
-  const user = await dataSchema.find({ email });
+  const [user] = await dataSchema.find({ email });
   console.log(user);
 
   if (!user) {
@@ -38,16 +39,21 @@ const handleGetUser = async (req, res) => {
       .json({ error: "Email not found. User not registered" });
   }
 
+  const token = jwt.sign({ email: user.email }, process.env.JWT_TOKEN_KEY, {
+    expiresIn: "1h",
+  });
+
   let result = {
     message: "success",
     data: {
-      user,
+      token,
+      email: user.email,
+      password: user.password,
     },
   };
 
   return res.status(201).json(result);
 };
-
 
 // /create - check if user already registered
 const handleGetUserPresentAlready = async (req, res) => {
