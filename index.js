@@ -3,12 +3,12 @@ require("dotenv").config();
 const dbConnection = require("./config/DbConnection");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const router = require("./routes/dataRoutes");
-
+const router = require("./routes/index.routes");
+// const ProductRouter = require("./routes/Product.routes");
 dbConnection();
 
 const app = express();
-
+``;
 // Enable CORS middleware before all routes
 app.use(
   cors({
@@ -26,9 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api", router);
 
 // Example API endpoint
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from backend!" });
-});
+// app.get("/api", (req, res) => {
+//   res.json({ message: "Hello from backend!" });
+// });
 
 const port = process.env.PORT || 8001;
 

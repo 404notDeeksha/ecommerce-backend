@@ -1,4 +1,4 @@
-const dataSchema = require("../models/DataPattern");
+const account = require("../models/Account.model");
 const jwt = require("jsonwebtoken");
 
 // /signup - create user account
@@ -9,7 +9,7 @@ const handleCreateUser = async (req, res) => {
     return res.status(404).json({ error: "Enter all required details" });
   }
 
-  const user = await dataSchema.create({
+  const user = await account.create({
     name,
     email,
     password,
@@ -30,7 +30,7 @@ const handleGetUser = async (req, res) => {
   const { email } = req.body;
   console.log("email", email);
 
-  const [user] = await dataSchema.find({ email });
+  const [user] = await account.find({ email });
   console.log(user);
 
   if (!user) {
@@ -39,9 +39,20 @@ const handleGetUser = async (req, res) => {
       .json({ error: "Email not found. User not registered" });
   }
 
-  const token = jwt.sign({ email: user.email }, process.env.JWT_TOKEN_KEY, {
-    expiresIn: "1h",
-  });
+  const token = jwt.sign(
+    { email: user.email },
+    process.env.JWT_TOKEN_KEY,
+    {
+      expiresIn: "1h",
+    },
+    (err, token) => {
+      if (err) {
+        console.error("Error signing the token:", err);
+      } else {
+        console.log("Generated Token:", token);
+      }
+    }
+  );
 
   let result = {
     message: "success",
@@ -60,7 +71,7 @@ const handleGetUserPresentAlready = async (req, res) => {
   const { email } = req.body;
   // console.log(email);
 
-  const [user] = await dataSchema.find({ email: email });
+  const [user] = await account.find({ email: email });
   // console.log(user);
 
   if (user) {
@@ -76,7 +87,7 @@ const handleGetUserCredentials = async (req, res) => {
   const { email, password } = req.body;
   // console.log("name", email, password);
 
-  const [user] = await dataSchema.find({ email: email });
+  const [user] = await account.find({ email: email });
 
   console.log("user", user);
 
