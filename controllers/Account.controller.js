@@ -3,26 +3,26 @@ const jwt = require("jsonwebtoken");
 
 // /signup - create user account
 const handleCreateUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  // console.log("name", name, email, password);
-  if (!name || !email || !password) {
-    return res.status(404).json({ error: "Enter all required details" });
+  try {
+    const { name, email, password } = req.body;
+    // console.log("name", name, email, password);
+    const user = await account.create({
+      name,
+      email,
+      password,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: user,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      error: err.message,
+    });
   }
-
-  const user = await account.create({
-    name,
-    email,
-    password,
-  });
-
-  let result = {
-    message: "success",
-    data: {
-      user,
-    },
-  };
-
-  return res.status(201).json(result);
 };
 
 // /signin - user is registered or not
