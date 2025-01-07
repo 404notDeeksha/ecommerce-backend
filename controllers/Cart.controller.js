@@ -65,13 +65,11 @@ const addCartItems = async (req, res) => {
     }
 
     await cart.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Items added to cart successfully",
-        cart,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Items added to cart successfully",
+      cart,
+    });
   } catch (error) {
     res
       .status(500)
@@ -80,10 +78,10 @@ const addCartItems = async (req, res) => {
 };
 
 // Update Cart Item
-//  /api/cart
+//  /api/cart/update
 const updateCartItems = async (req, res) => {
   const { userId, items } = req.body; // Extract userId and items from the request body
-
+  console.log(userId, items);
   try {
     // Find the cart for the given userId
     const cart = await Cart.findOne({ userId });
