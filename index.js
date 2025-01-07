@@ -8,7 +8,7 @@ const router = require("./routes/index.routes");
 dbConnection();
 
 const app = express();
-``;
+
 // Enable CORS middleware before all routes
 app.use(
   cors({
