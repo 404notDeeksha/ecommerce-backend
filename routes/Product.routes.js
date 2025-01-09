@@ -4,7 +4,6 @@ const router = Router();
 
 //  /api/products
 router.get("/", Products.getAllProducts);
-router.get("/:filter", Products.getFilteredProducts);
 router.get("/product/:id", Products.getSingleProduct);
 
 module.exports = router;
