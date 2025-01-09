@@ -2,7 +2,7 @@ const express = require("express");
 const {
   getCategoryByCategoryId,
   getProductByCategoryAndProductId,
-} = require("../controllers/ProductCategories.controllers"); // Adjust the path
+} = require("../controllers/ProductCategories.controller"); // Adjust the path
 
 const router = express.Router();
 
