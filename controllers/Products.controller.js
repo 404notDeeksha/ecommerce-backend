@@ -2,8 +2,9 @@ const Products = require("../models/Products.model");
 const createHttpError = require("http-errors");
 
 const getAllProducts = async (req, res, next) => {
+  const { id } = req.params.id;
   try {
-    const post = await Products.find();
+    const post = await Products.find({ category_id: id });
     if (!post)
       throw createHttpError.NotFound({ message: "Products Not Found!" });
     res.send(post);
