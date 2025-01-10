@@ -4,7 +4,6 @@ const dbConnection = require("./config/DbConnection");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const router = require("./routes/index.routes");
-// const ProductRouter = require("./routes/Product.routes");
 dbConnection();
 
 const app = express();
