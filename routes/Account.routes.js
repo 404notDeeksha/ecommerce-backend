@@ -1,15 +1,15 @@
 const express = require("express");
 const {
-  handleCreateUser,
+  createAccount,
   handleGetUser,
-  handleGetUserPresentAlready,
+  checkAccount,
   handleGetUserCredentials,
 } = require("../controllers/Account.controller");
 
 const accountRouter = express.Router();
 
-accountRouter.route("/").post(handleCreateUser);
-accountRouter.route("/create").post(handleGetUserPresentAlready);
+accountRouter.route("/create").post(createAccount);
+accountRouter.route("/check").post(checkAccount);
 accountRouter.route("/signin").post(handleGetUser);
 accountRouter.route("/signin/auth").get(handleGetUserCredentials);
 // accountRouter.route("/products").get(handleGetP)

@@ -1,7 +1,6 @@
 const express = require("express");
 require("dotenv").config();
 const dbConnection = require("./config/DbConnection");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const router = require("./routes/index.routes");
 dbConnection();
@@ -23,11 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api", router);
-
-// Example API endpoint
-// app.get("/api", (req, res) => {
-//   res.json({ message: "Hello from backend!" });
-// });
 
 const port = process.env.PORT || 8001;
 

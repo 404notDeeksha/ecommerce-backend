@@ -1,8 +1,8 @@
 const account = require("../models/Account.model");
 const jwt = require("jsonwebtoken");
 
-// /signup - create user account
-const handleCreateUser = async (req, res) => {
+// /account/create - create user account
+const createAccount = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     // console.log("name", name, email, password);
@@ -20,12 +20,12 @@ const handleCreateUser = async (req, res) => {
   } catch (err) {
     res.status(404).json({
       success: false,
-      error: err.message,
+      data: err.message,
     });
   }
 };
 
-// /signin - user is registered or not
+// /account/auth- user is registered or not
 const handleGetUser = async (req, res) => {
   const { email } = req.body;
   console.log("email", email);
@@ -40,20 +40,13 @@ const handleGetUser = async (req, res) => {
   }
 
   const token = jwt.sign(
-    { email: user.email },
+    { email: user.email, userId: user.userId },
     process.env.JWT_TOKEN_KEY,
     {
       expiresIn: "1h",
-    },
-    (err, token) => {
-      if (err) {
-        console.error("Error signing the token:", err);
-      } else {
-        console.log("Generated Token:", token);
-      }
     }
   );
-
+  console.log(token);
   let result = {
     message: "success",
     data: {
@@ -63,23 +56,21 @@ const handleGetUser = async (req, res) => {
     },
   };
 
-  return res.status(201).json(result);
+  return res.status(201).json({ success: true, data: result });
 };
 
-// /create - check if user already registered
-const handleGetUserPresentAlready = async (req, res) => {
+// /account/check - check if account already registered
+const checkAccount = async (req, res) => {
   const { email } = req.body;
-  // console.log(email);
-
+  console.log(email);
   const [user] = await account.find({ email: email });
-  // console.log(user);
-
   if (user) {
-    return res
-      .status(201)
-      .json({ message: "User Already Registered. Go to signin page" });
+    return res.status(201).json({
+      success: true,
+      message: "User Already Registered. Go to signin page",
+      data: user,
+    });
   }
-  // return res.status(201).json({ result: "success" });
 };
 
 // /signin - match user credentials
@@ -112,8 +103,8 @@ const handleGetUserCredentials = async (req, res) => {
 };
 
 module.exports = {
-  handleCreateUser,
-  handleGetUserPresentAlready,
+  createAccount,
+  checkAccount,
   handleGetUser,
   handleGetUserCredentials,
 };

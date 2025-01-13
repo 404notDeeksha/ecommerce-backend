@@ -1,52 +1,12 @@
 const Cart = require("../models/Cart.model");
 
-//   /api/cart
-// Add or Update Items in Cart
-// const addOrUpdateCart = async (req, res) => {
-//   const { userId, items } = req.body;
-
-//   try {
-//     let cart = await Cart.findOne({ userId });
-//     console.log(cart);
-//     if (!cart) {
-//       // Create a new cart if it doesn't exist
-//       cart = new Cart({ userId, items });
-//     } else {
-//       // Update existing cart items
-//       items.forEach((newItem) => {
-//         const index = cart.items.findIndex(
-//           (item) => item.ProductId === newItem.ProductId
-//         );
-
-//         if (index === -1) {
-//           // Add new item to the cart
-//           cart.items.push(newItem);
-//         } else {
-//           // Update quantity of the existing item
-//           cart.items[index].quantity += newItem.quantity;
-//         }
-//       });
-//     }
-
-//     await cart.save();
-//     res
-//       .status(200)
-//       .json({ success: true, message: "Cart updated successfully", cart });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ success: false, message: "Error updating cart", error });
-//   }
-// };
-
 // ADD TO CART
 // /api/cart
 const addCartItems = async (req, res) => {
   const { userId, items } = req.body;
-
+  // console.log("ADD TO CART", items);
   try {
     let cart = await Cart.findOne({ userId });
-
     if (!cart) {
       // Create a new cart if it doesn't exist
       cart = new Cart({ userId, items });
@@ -56,19 +16,22 @@ const addCartItems = async (req, res) => {
         const index = cart.items.findIndex(
           (item) => item.ProductId === newItem.ProductId
         );
-
+        console.log(`cart exists and adding ite`);
         if (index === -1) {
           // Add the new item to the cart
           cart.items.push(newItem);
+        } else {
+          // add 1 to qty
+          // cart.item
         }
       });
     }
-
+    console.log(cart);
     await cart.save();
     res.status(200).json({
       success: true,
       message: "Items added to cart successfully",
-      cart,
+      data: cart,
     });
   } catch (error) {
     res
@@ -78,14 +41,14 @@ const addCartItems = async (req, res) => {
 };
 
 // Update Cart Item
-//  /api/cart/update
+//  /api/cart
 const updateCartItems = async (req, res) => {
   const { userId, items } = req.body; // Extract userId and items from the request body
-  console.log(userId, items);
+
   try {
     // Find the cart for the given userId
     const cart = await Cart.findOne({ userId });
-
+    console.log(userId, items, cart);
     if (!cart) {
       return res
         .status(404)
@@ -110,9 +73,11 @@ const updateCartItems = async (req, res) => {
 
     // Save the updated cart to the database
     await cart.save();
-    res
-      .status(200)
-      .json({ success: true, message: "Cart updated successfully", cart });
+    res.status(200).json({
+      success: true,
+      message: "Cart updated successfully",
+      data: cart.items,
+    });
   } catch (error) {
     res
       .status(500)
@@ -121,55 +86,56 @@ const updateCartItems = async (req, res) => {
 };
 
 // Get Cart for a Specific User
+//   /api/cart/:userId
 const getCart = async (req, res) => {
   const { userId } = req.params;
 
   try {
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
     }
-
-    res.status(200).json(cart);
+    res.status(200).json({ success: true, data: cart });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching cart", error });
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching cart", data: error });
   }
 };
 
-// // Delete an Item from the Cart
-// const deleteCartItem = async (req, res) => {
-//   const { userId, productId } = req.body;
-
-//   try {
-//     const cart = await Cart.findOne({ userId });
-
-//     if (!cart) {
-//       return res.status(404).json({ message: "Cart not found" });
-//     }
-
-//     cart.items = cart.items.filter((item) => item.ProductId !== productId);
-
-//     await cart.save();
-//     res.status(200).json({ message: "Item removed from cart", cart });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error removing item from cart", error });
-//   }
-// };
-
-// Clear the Entire Cart
-const clearCart = async (req, res) => {
-  const { userId } = req.body;
+//   Delete an Item from the Cart
+//   /api/cart/:productId
+const deleteCartItem = async (req, res) => {
+  console.log("Params:", req.params);
+  console.log("Body:", req.body);
+  const { userId, productId } = req.params;
+  console.log("DELETE cart", userId, productId);
 
   try {
-    const cart = await Cart.findOneAndDelete({ userId });
+    const cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
     }
 
-    res.status(200).json({ message: "Cart cleared successfully" });
+    cart.items = cart.items.filter((item) => item.ProductId !== productId);
+
+    await cart.save();
+    res.status(200).json({
+      success: true,
+      message: "Item removed from cart",
+      data: cart,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error clearing cart", error });
+    res.status(500).json({
+      success: false,
+      message: "Error removing item from cart",
+      data: error,
+    });
   }
 };
 
@@ -177,6 +143,5 @@ module.exports = {
   addCartItems,
   updateCartItems,
   getCart,
-  // deleteCartItem,
-  clearCart,
+  deleteCartItem,
 };

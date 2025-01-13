@@ -1,7 +1,7 @@
 const Products = require("../models/Products.model");
 const createHttpError = require("http-errors");
 
-//   /api/products/:filter
+//   /api/products/
 const getAllProducts = async (req, res, next) => {
   try {
     // Extract filters dynamically from query parameters
@@ -32,11 +32,7 @@ const getAllProducts = async (req, res, next) => {
     if (!products || products.length === 0) {
       return next(createHttpError.NotFound("Products Not Found!"));
     }
-    res.send(products);
-    // res.status(200).json({
-    //   success: true,
-    //   data: products,
-    // });
+    res.send({ success: true, data: products });
   } catch (error) {
     next(error);
   }
@@ -46,13 +42,13 @@ const getAllProducts = async (req, res, next) => {
 const getSingleProduct = async (req, res, next) => {
   console.log("hey3");
   try {
-    const post = await Products.findOne({ ProductId: req.params.id });
-    console.log("Post found", post);
-    if (!post)
+    const product = await Products.findOne({ ProductId: req.params.id });
+    console.log("product found", product);
+    if (!product)
       throw createHttpError.NotFound({ message: "Product Not Found!" });
-    res.send(post);
+    res.send({ success: true, data: product });
   } catch (error) {
-    next(error);
+    console.log("Error fetching Product", error);
   }
 };
 
