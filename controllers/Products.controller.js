@@ -3,6 +3,7 @@ const createHttpError = require("http-errors");
 
 //   /api/products/
 const getAllProducts = async (req, res, next) => {
+  console.log("CALLING ALL PRODUCTS");
   try {
     // Extract filters dynamically from query parameters
     const filters = req.query;
@@ -11,7 +12,7 @@ const getAllProducts = async (req, res, next) => {
     const query = {};
 
     if (filters.category) {
-      query.Category = filters.category;
+      query.category = filters.category;
     }
 
     if (filters.minPrice || filters.maxPrice) {
@@ -25,9 +26,10 @@ const getAllProducts = async (req, res, next) => {
       query.Brand = { $in: filters.brand.split(",") }; // Support multiple brands
     }
 
-    console.log(query);
+    console.log("query", query);
     // Fetch filtered products from database
     const products = await Products.find(query);
+    // console.log("PRODUCT", products);
 
     if (!products || products.length === 0) {
       return next(createHttpError.NotFound("Products Not Found!"));
