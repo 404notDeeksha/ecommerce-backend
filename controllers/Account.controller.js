@@ -46,11 +46,11 @@ const handleGetUser = async (req, res) => {
       expiresIn: "1h",
     }
   );
-  console.log(token);
+  console.log("Token", token);
   let result = {
     message: "success",
     data: {
-      token,
+      token: token,
       email: user.email,
       password: user.password,
     },
@@ -59,11 +59,12 @@ const handleGetUser = async (req, res) => {
   return res.status(201).json({ success: true, data: result });
 };
 
-// /account/check - check if account already registered
-const checkAccount = async (req, res) => {
+// POST/account/check - check if account already registered
+const checkEmail = async (req, res) => {
   const { email } = req.body;
-  console.log(email);
+  // console.log("User's Email",email);
   const [user] = await account.find({ email: email });
+
   if (user) {
     return res.status(201).json({
       success: true,
@@ -104,7 +105,7 @@ const handleGetUserCredentials = async (req, res) => {
 
 module.exports = {
   createAccount,
-  checkAccount,
+  checkEmail,
   handleGetUser,
   handleGetUserCredentials,
 };
