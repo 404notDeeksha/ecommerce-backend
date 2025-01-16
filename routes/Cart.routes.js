@@ -9,7 +9,7 @@ router.post("/", cartController.addCartItems);
 router.get("/:userId", cartController.getCart);
 
 // Update an item in the cart - qty, color , brand update
-router.put("/", cartController.updateCartItems);
+router.put("/:userId/:productId/:quantity", cartController.updateCartQty);
 
 // deletion is  wrto product id
 router.delete("/:userId/:productId", cartController.deleteCartItem);

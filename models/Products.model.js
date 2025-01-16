@@ -87,6 +87,15 @@ const productSchema = new mongoose.Schema({
   items: [itemSchema], // Embed itemSchema for the items array
 });
 
+// create index
+productSchema.index({
+  productName: "text",
+  productDescription: "text",
+  brand: "text",
+  category: "text",
+  subCategory: "text",
+});
+
 // Create the model
 const Product = mongoose.model("Product", productSchema);
 

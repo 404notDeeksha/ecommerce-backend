@@ -15,6 +15,17 @@ const getAllProducts = async (req, res, next) => {
       query.category = filters.category;
     }
 
+    if (filters.subCategory) {
+      query.subCategory = filters.subCategory;
+    }
+
+    if (filters.discount) {
+      query.discount = {
+        ...{ $gte: 0 },
+        ...{ $lte: filters.discount },
+      };
+    }
+
     if (filters.minPrice || filters.maxPrice) {
       query.Price = {
         ...(filters.minPrice && { $gte: parseFloat(filters.minPrice) }),
@@ -23,7 +34,7 @@ const getAllProducts = async (req, res, next) => {
     }
 
     if (filters.brand) {
-      query.Brand = { $in: filters.brand.split(",") }; // Support multiple brands
+      query.brand = { $in: filters.brand.split(",") }; // Support multiple brands
     }
 
     console.log("query", query);
@@ -42,9 +53,9 @@ const getAllProducts = async (req, res, next) => {
 
 //  /api/products/product/:id
 const getSingleProduct = async (req, res, next) => {
-  console.log("hey3");
+  console.log("hey3", req.params.id);
   try {
-    const product = await Products.findOne({ ProductId: req.params.id });
+    const product = await Products.findOne({ productId: req.params.id });
     console.log("product found", product);
     if (!product)
       throw createHttpError.NotFound({ message: "Product Not Found!" });
@@ -54,4 +65,21 @@ const getSingleProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProducts, getSingleProduct };
+// const searchProduct = async (req, res, next) => {
+//   const searchText = req.query.q;
+//   console.log(searchText);
+//   try {
+//     const results = await Products.find({ $text: { $search: searchText } });
+//     if (!results)
+//       throw createHttpError.NotFound({ message: "Product Not Found!" });
+//     res.send({ success: true, data: results });
+//   } catch (error) {
+//     console.log("Error fetching Product", error);
+//   }
+// };
+
+module.exports = {
+  getAllProducts,
+  getSingleProduct,
+  // searchProduct
+};
