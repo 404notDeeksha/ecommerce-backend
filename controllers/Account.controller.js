@@ -25,45 +25,12 @@ const createAccount = async (req, res) => {
   }
 };
 
-// /account/auth- user is registered or not
-const handleGetUser = async (req, res) => {
-  const { email } = req.body;
-  console.log("email", email);
-
-  const [user] = await account.find({ email });
-  console.log(user);
-
-  if (!user) {
-    return res
-      .status(404)
-      .json({ error: "Email not found. User not registered" });
-  }
-
-  const token = jwt.sign(
-    { email: user.email, userId: user.userId },
-    process.env.JWT_TOKEN_KEY,
-    {
-      expiresIn: "1h",
-    }
-  );
-  console.log("Token", token);
-  let result = {
-    message: "success",
-    data: {
-      token: token,
-      email: user.email,
-      password: user.password,
-    },
-  };
-
-  return res.status(201).json({ success: true, data: result });
-};
-
 // POST/account/check - check if account already registered
 const checkEmail = async (req, res) => {
   const { email } = req.body;
-  // console.log("User's Email",email);
+  console.log("User's Email", email);
   const [user] = await account.find({ email: email });
+  console.log("User", user);
 
   if (user) {
     return res.status(201).json({
@@ -74,6 +41,46 @@ const checkEmail = async (req, res) => {
   }
 };
 
+// POST/account/auth- signs in registered user
+const authController = async (req, res) => {
+  const { email, password } = req.body;
+  console.log("Email auth", email);
+
+  const [user] = await account.find({ email });
+  console.log("User auth", user);
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: "Email not found. User not registered" });
+  }
+
+  if (user.password !== password) {
+    return res.status(404).json({
+      success: false,
+      error: "Password entered is Incorrect",
+    });
+  }
+  console.log("Verified password", password);
+
+  const token = jwt.sign(
+    { userId: user.userId, email: user.email },
+    process.env.JWT_TOKEN_KEY,
+    {
+      expiresIn: "1h",
+    }
+  );
+  console.log("Token", token);
+  let result = {
+    success: true,
+    data: {
+      token,
+      user,
+    },
+  };
+  return res.status(201).json({ success: true, data: result });
+};
+
 // /signin - match user credentials
 const handleGetUserCredentials = async (req, res) => {
   const { email, password } = req.body;
@@ -81,7 +88,7 @@ const handleGetUserCredentials = async (req, res) => {
 
   const [user] = await account.find({ email: email });
 
-  console.log("user", user);
+  // console.log("user", user);
 
   if (!user) {
     return res
@@ -106,6 +113,6 @@ const handleGetUserCredentials = async (req, res) => {
 module.exports = {
   createAccount,
   checkEmail,
-  handleGetUser,
+  authController,
   handleGetUserCredentials,
 };
