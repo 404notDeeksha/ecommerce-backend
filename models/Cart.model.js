@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 // Define the schema for cart items
 const cartItemSchema = new mongoose.Schema({
@@ -46,9 +47,10 @@ const cartItemSchema = new mongoose.Schema({
 const cartSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId, // Reference to the User model
-      ref: "User",
-      required: true,
+      type: String,
+      default: uuidv4, // Automatically generate a unique UUID
+      unique: true, // Ensure uniqueness in the database
+      index: true, // Index this field for faster queries
     },
     items: [cartItemSchema], // Array of cart items
     totalPrice: {

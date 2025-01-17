@@ -4,7 +4,6 @@ const Cart = require("../models/Cart.model");
 // POST/api/cart
 const addCartItems = async (req, res) => {
   const { userId, items } = req.body;
-  // console.log("ADD TO CART", items);
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {

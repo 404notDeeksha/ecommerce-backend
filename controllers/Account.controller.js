@@ -70,7 +70,9 @@ const authController = async (req, res) => {
       expiresIn: "1h",
     }
   );
+
   console.log("Token", token);
+
   let result = {
     success: true,
     data: {
@@ -82,37 +84,37 @@ const authController = async (req, res) => {
 };
 
 // /signin - match user credentials
-const handleGetUserCredentials = async (req, res) => {
-  const { email, password } = req.body;
-  // console.log("name", email, password);
+// const handleGetUserCredentials = async (req, res) => {
+//   const { email, password } = req.body;
+//   // console.log("name", email, password);
 
-  const [user] = await account.find({ email: email });
+//   const [user] = await account.find({ email: email });
 
-  // console.log("user", user);
+//   // console.log("user", user);
 
-  if (!user) {
-    return res
-      .status(404)
-      .json({ error: "Email not found. User not registered" });
-  }
+//   if (!user) {
+//     return res
+//       .status(404)
+//       .json({ error: "Email not found. User not registered" });
+//   }
 
-  if (user.password !== password) {
-    return res.status(404).json({ error: "Password entered is Incorrect" });
-  }
+//   if (user.password !== password) {
+//     return res.status(404).json({ error: "Password entered is Incorrect" });
+//   }
 
-  let result = {
-    message: "success",
-    data: {
-      user,
-    },
-  };
+//   let result = {
+//     message: "success",
+//     data: {
+//       user,
+//     },
+//   };
 
-  return res.status(201).json(result);
-};
+//   return res.status(201).json(result);
+// };
 
 module.exports = {
   createAccount,
   checkEmail,
   authController,
-  handleGetUserCredentials,
+  // handleGetUserCredentials,
 };
