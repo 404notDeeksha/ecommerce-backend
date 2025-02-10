@@ -1,120 +1,132 @@
-const account = require("../models/Account.model");
+const User = require("../models/Account.model");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// /account/create - create user account
-const createAccount = async (req, res) => {
+// POST/user/signup - create user account
+const signupUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    // console.log("name", name, email, password);
-    const user = await account.create({
+    // console.log("Guest data", name, email, password);
+
+    let user = await User.findOne({ email });
+    if (user)
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
+    await user.save();
 
     res.status(201).json({
       success: true,
-      message: "User created successfully",
-      data: user,
+      message: "User registered successfully",
+      data: { name: user.name, email: user.email },
     });
   } catch (err) {
     res.status(404).json({
       success: false,
-      data: err.message,
+      data: err,
     });
   }
 };
 
-// POST/account/check - check if account already registered
-const checkEmail = async (req, res) => {
-  const { email } = req.body;
-  console.log("User's Email", email);
-  const [user] = await account.find({ email: email });
-  console.log("User", user);
+// POST/user/emailAuth - check if account already registered
+const verifyEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log("User's Email", email);
+    const [user] = await User.find({ email: email });
 
-  if (user) {
-    return res.status(201).json({
-      success: true,
-      message: "User Already Registered. Go to signin page",
-      data: user,
-    });
-  }
-};
-
-// POST/account/auth- signs in registered user
-const authController = async (req, res) => {
-  const { email, password } = req.body;
-  console.log("Email auth", email);
-
-  const [user] = await account.find({ email });
-  console.log("User auth", user);
-
-  if (!user) {
-    return res
-      .status(404)
-      .json({ error: "Email not found. User not registered" });
-  }
-
-  if (user.password !== password) {
-    return res.status(404).json({
-      success: false,
-      error: "Password entered is Incorrect",
-    });
-  }
-  console.log("Verified password", password);
-
-  const token = jwt.sign(
-    { userId: user.userId, email: user.email },
-    process.env.JWT_TOKEN_KEY,
-    {
-      expiresIn: "1h",
+    if (user) {
+      return res.status(201).json({
+        success: true,
+        message: "User Already Registered. Go to signin page",
+        data: user,
+      });
     }
-  );
-
-  console.log("Token", token);
-
-  let result = {
-    success: true,
-    data: {
-      token,
-      user,
-    },
-  };
-  return res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    res.status(404).json({
+      success: false,
+      data: err,
+    });
+  }
 };
 
-// /signin - match user credentials
-// const handleGetUserCredentials = async (req, res) => {
-//   const { email, password } = req.body;
-//   // console.log("name", email, password);
+// POST/user/auth- login registered user
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // console.log("Email auth", email);
 
-//   const [user] = await account.find({ email: email });
+    const [user] = await User.findOne({ email });
+    // console.log("User auth", user);
 
-//   // console.log("user", user);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: "Email not found. User not registered" });
+    }
 
-//   if (!user) {
-//     return res
-//       .status(404)
-//       .json({ error: "Email not found. User not registered" });
-//   }
+    const isMatch = await bcrypt.compare(password, user.password);
 
-//   if (user.password !== password) {
-//     return res.status(404).json({ error: "Password entered is Incorrect" });
-//   }
+    if (!isMatch)
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid credentials" });
 
-//   let result = {
-//     message: "success",
-//     data: {
-//       user,
-//     },
-//   };
+    const token = generateToken(user);
 
-//   return res.status(201).json(result);
-// };
+    res.cookie("token", token, {
+      httpOnly: true, // Prevents access via JavaScript
+      secure: process.env.NODE_ENV === "production", // Ensures it's only sent over HTTPS in production
+      sameSite: "Strict", // Prevents CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
+    });
+
+    // if (user.password !== password) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     error: "Password entered is Incorrect",
+    //   });
+    // }
+    // console.log("Verified password", password);
+
+    const generateToken = (user) => {
+      return jwt.sign({ userId: user.userId }, process.env.JWT_SECRET_KEY, {
+        expiresIn: "7d",
+      });
+    };
+
+    res.status(201).json({
+      success: true,
+      message: "Login successful",
+      user: { id: user.userId, name: user.name, email: user.email },
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+
+  // console.log("Token", token);
+
+  // let result = {
+  //   success: true,
+  //   data: {
+  //     token,
+  //     user,
+  //   },
+  // };
+  // return res.status(201).json({ success: true, data: result });
+};
 
 module.exports = {
-  createAccount,
-  checkEmail,
-  authController,
-  // handleGetUserCredentials,
+  signupUser,
+  verifyEmail,
+  loginUser,
 };

@@ -49,7 +49,7 @@ const addCartItems = async (req, res) => {
 };
 
 // Update Cart Item
-//  /api/cart
+//  PUT/api/cart
 const updateCartQty = async (req, res) => {
   const { userId, productId, quantity } = req.params;
   console.log("Params of PUT request", req.params);
@@ -108,6 +108,7 @@ const getCart = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
     res.status(200).json({ success: true, data: cart });
+    console.log("CART", cart);
   } catch (error) {
     res
       .status(500)
@@ -154,29 +155,3 @@ module.exports = {
   getCart,
   deleteCartItem,
 };
-
-// try {
-//   // Find the cart for the given userId
-//   const cart = await Cart.findOne({ userId });
-//   console.log(userId, items, cart);
-//   if (!cart) {
-//     return res
-//       .status(404)
-//       .json({ success: false, message: "Cart not found for the user" });
-//   }
-
-// Loop through the items to update their quantities or other properties
-// items.forEach((newItem) => {
-//   const index = cart.items.findIndex(
-//     (item) => item.productId === newItem.productId // Match item by ProductId
-//   );
-
-//   if (index !== -1) {
-//     // Update the existing item's quantity or other fields
-//     cart.items[index].quantity =
-//       newItem.quantity || cart.items[index].quantity;
-//     cart.items[index].color = newItem.color || cart.items[index].color;
-//     cart.items[index].seller = newItem.seller || cart.items[index].seller;
-//     cart.items[index].price = newItem.price || cart.items[index].price;
-//   }
-// });

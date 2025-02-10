@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
-const accountSchema = new mongoose.Schema(
+
+const userSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
-      default: uuidv4, // Automatically generate a unique ID
+      default: uuidv4,
       unique: true,
       index: true,
     },
@@ -18,17 +19,16 @@ const accountSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      // match: [/.+@.+\..+/, 'Please enter a valid email address'], // Basic email validation
     },
     password: {
       type: String,
       required: true,
-      minlength: 6, // Ensure secure password length
+      minlength: 6,
     },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Account", accountSchema);
+module.exports = mongoose.model("User", userSchema);

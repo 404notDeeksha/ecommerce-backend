@@ -9,6 +9,7 @@ const dbConnection = async () => {
     .catch((err) => {
       console.log("Mongodb Db connection failed", err);
     });
+    
 };
 
 module.exports = dbConnection;
