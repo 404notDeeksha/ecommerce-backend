@@ -1,4 +1,4 @@
-const userRouter = require("./Account.routes");
+const userRouter = require("./User.routes");
 const ProductRouter = require("./Product.routes");
 const CartRouter = require("./Cart.routes");
 const CategoryRouter = require("./Category.routes");

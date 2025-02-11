@@ -1,8 +1,8 @@
-const User = require("../models/Account.model");
+const User = require("../models/User.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// POST/user/signup - create user account
+// POST api/user/signup - create user account
 const signupUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -22,12 +22,32 @@ const signupUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    // console.log("User", user);
     await user.save();
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    // console.log("tokenr", accessToken, refreshToken);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true, // Prevent client-side JS from accessing it
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      sameSite: "strict", // Prevent CSRF
+      maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
+    });
 
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: { name: user.name, email: user.email },
+      data: { id: user.userId, name: user.name, email: user.email },
     });
   } catch (err) {
     res.status(404).json({
@@ -37,7 +57,7 @@ const signupUser = async (req, res) => {
   }
 };
 
-// POST/user/emailAuth - check if account already registered
+// POST api/user/emailAuth - check if account already registered
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -98,12 +118,6 @@ const loginUser = async (req, res) => {
     // }
     // console.log("Verified password", password);
 
-    const generateToken = (user) => {
-      return jwt.sign({ userId: user.userId }, process.env.JWT_SECRET_KEY, {
-        expiresIn: "7d",
-      });
-    };
-
     res.status(201).json({
       success: true,
       message: "Login successful",
@@ -123,6 +137,21 @@ const loginUser = async (req, res) => {
   //   },
   // };
   // return res.status(201).json({ success: true, data: result });
+};
+
+const generateAccessToken = (user) => {
+  console.log("Token-->", user, process.env.JWT_ACCESS_KEY);
+
+  return jwt.sign({ userId: user.userId }, process.env.JWT_ACCESS_KEY, {
+    expiresIn: "15m",
+  });
+};
+
+const generateRefreshToken = (user) => {
+  console.log("Token");
+  return jwt.sign({ userId: user.userId }, process.env.JWT_REFRESH_KEY, {
+    expiresIn: "7d",
+  });
 };
 
 module.exports = {
