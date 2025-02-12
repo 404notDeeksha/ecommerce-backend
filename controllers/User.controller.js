@@ -80,7 +80,7 @@ const verifyEmail = async (req, res) => {
 };
 
 // POST  api/user/login- login registered user
-const loginUser = async (req, res) => {
+const verifyPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log("Email auth", email, password);
@@ -128,16 +128,83 @@ const loginUser = async (req, res) => {
   }
 };
 
-const generateAccessToken = (user) => {
-  // console.log("Token-->", user, process.env.JWT_ACCESS_KEY);
+// POST api/user/logout
+const logoutUser = (req, res) => {
+  try {
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
 
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
+
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    console.log("Cookie cant be deleted", err);
+  }
+};
+
+// GET api/user/refresh
+const refreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
+
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_ACCESS_KEY,
+      { expiresIn: "15m" }
+    );
+
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
+    });
+
+    res.json({ message: "Token refreshed" });
+  } catch (error) {
+    return res.status(403).json({ message: "Invalid refresh token" });
+  }
+};
+
+// import jwt from "jsonwebtoken";
+
+// export const refreshToken = (req, res) => {
+//   const refreshToken = req.cookies.refreshToken;
+
+//   if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
+
+//   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
+//     if (err) return res.status(403).json({ message: "Forbidden" });
+
+//     const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_SECRET, { expiresIn: "15m" });
+
+//     res.cookie("accessToken", newAccessToken, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "strict",
+//     });
+
+//     res.status(200).json({ message: "Access token refreshed" });
+//   });
+// };
+
+const generateAccessToken = (user) => {
   return jwt.sign({ userId: user.userId }, process.env.JWT_ACCESS_KEY, {
     expiresIn: "15m",
   });
 };
 
 const generateRefreshToken = (user) => {
-  // console.log("Token");
   return jwt.sign({ userId: user.userId }, process.env.JWT_REFRESH_KEY, {
     expiresIn: "7d",
   });
@@ -146,5 +213,7 @@ const generateRefreshToken = (user) => {
 module.exports = {
   signupUser,
   verifyEmail,
-  loginUser,
+  verifyPassword,
+  logoutUser,
+  refreshToken,
 };

@@ -1,9 +1,9 @@
 // routes/categoryRoutes.js
 const express = require("express");
-const { getCategories } = require("../controllers/Category.controller");
+const { getCarousel } = require("../controllers/Carousel.controller");
 const router = express.Router();
 
 // Define the route for getting categories
-router.get("/", getCategories);
+router.get("/featured", getCarousel);
 
 module.exports = router;
