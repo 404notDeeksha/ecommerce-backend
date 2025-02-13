@@ -16,8 +16,8 @@ const carouselSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-  },
-  { collection: "category_grid" } // Mongoose will now look for the category_collection collection in MongoDB.
+  }
+  // { collection: "category_grid" } // Mongoose will now look for the category_collection collection in MongoDB.
 );
 
 const Carousel = mongoose.model("Carousel", carouselSchema);

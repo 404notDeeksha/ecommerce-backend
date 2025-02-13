@@ -1,13 +1,12 @@
 const Products = require("../models/Products.model");
-const createHttpError = require("http-errors");
 
-//   /api/products/
+//   GET /api/products?filter
 const getAllProducts = async (req, res, next) => {
-  console.log("CALLING ALL PRODUCTS");
+  // console.log("CALLING ALL PRODUCTS");
   try {
     // Extract filters dynamically from query parameters
     const filters = req.query;
-    console.log("Filters", filters);
+    // console.log("Filters", filters);
     // Build the dynamic query
     const query = {};
 
@@ -37,28 +36,35 @@ const getAllProducts = async (req, res, next) => {
       query.brand = { $in: filters.brand.split(",") }; // Support multiple brands
     }
 
-    console.log("query", query);
+    // console.log("query", query);
     // Fetch filtered products from database
     const products = await Products.find(query);
     // console.log("PRODUCT", products);
-
+    console.log("products", products.length);
     if (!products || products.length === 0) {
-      return next(createHttpError.NotFound("Products Not Found!"));
+      return res.status(200).json({
+        success: false,
+        message: "No products found matching the filters.",
+        data: [],
+      });
     }
     res.send({ success: true, data: products });
   } catch (error) {
-    next(error);
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-//  /api/products/product/:id
+//  GET /api/products/product/:id
 const getSingleProduct = async (req, res, next) => {
   console.log("hey3", req.params.id);
   try {
     const product = await Products.findOne({ productId: req.params.id });
     console.log("product found", product);
     if (!product)
-      throw createHttpError.NotFound({ message: "Product Not Found!" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product Not Found!" });
     res.send({ success: true, data: product });
   } catch (error) {
     console.log("Error fetching Product", error);

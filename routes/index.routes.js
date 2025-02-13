@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use("/user", userRouter);
 router.use("/carousel", authMiddleware, CarouselRouter);
-router.use("/categories", authMiddleware, ProductCategories);
+// router.use("/categories", ProductCategories);
 router.use("/products", authMiddleware, ProductRouter);
 router.use("/cart", authMiddleware, CartRouter);
 

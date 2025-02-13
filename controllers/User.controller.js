@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const signupUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    // console.log("Guest data", name, email, password);
 
     let user = await User.findOne({ email });
     if (user)
@@ -22,13 +21,10 @@ const signupUser = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    // console.log("User", user);
     await user.save();
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
-
-    // console.log("tokenr", accessToken, refreshToken);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -57,7 +53,7 @@ const signupUser = async (req, res) => {
   }
 };
 
-// POST api/user/emailAuth - check if account already registered
+// POST api/user/emailAuth
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -79,7 +75,7 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-// POST  api/user/login- login registered user
+// POST  api/user/passwordAuth
 const verifyPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -152,6 +148,7 @@ const logoutUser = (req, res) => {
 // GET api/user/refresh
 const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
+  console.log("REFERSH TOKEN", refreshToken);
   if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
 
   try {
@@ -175,28 +172,6 @@ const refreshToken = async (req, res) => {
     return res.status(403).json({ message: "Invalid refresh token" });
   }
 };
-
-// import jwt from "jsonwebtoken";
-
-// export const refreshToken = (req, res) => {
-//   const refreshToken = req.cookies.refreshToken;
-
-//   if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
-
-//   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
-//     if (err) return res.status(403).json({ message: "Forbidden" });
-
-//     const newAccessToken = jwt.sign({ id: user.id }, process.env.ACCESS_SECRET, { expiresIn: "15m" });
-
-//     res.cookie("accessToken", newAccessToken, {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: "strict",
-//     });
-
-//     res.status(200).json({ message: "Access token refreshed" });
-//   });
-// };
 
 const generateAccessToken = (user) => {
   return jwt.sign({ userId: user.userId }, process.env.JWT_ACCESS_KEY, {
