@@ -1,4 +1,3 @@
-// models/category.js
 const mongoose = require("mongoose");
 
 const carouselSchema = new mongoose.Schema(
@@ -17,7 +16,6 @@ const carouselSchema = new mongoose.Schema(
       required: true,
     },
   }
-  // { collection: "category_grid" } // Mongoose will now look for the category_collection collection in MongoDB.
 );
 
 const Carousel = mongoose.model("Carousel", carouselSchema);

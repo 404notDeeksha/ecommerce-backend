@@ -6,7 +6,7 @@ const getAllProducts = async (req, res, next) => {
   try {
     // Extract filters dynamically from query parameters
     const filters = req.query;
-    // console.log("Filters", filters);
+
     // Build the dynamic query
     const query = {};
 
@@ -36,10 +36,9 @@ const getAllProducts = async (req, res, next) => {
       query.brand = { $in: filters.brand.split(",") }; // Support multiple brands
     }
 
-    // console.log("query", query);
     // Fetch filtered products from database
     const products = await Products.find(query);
-    // console.log("PRODUCT", products);
+
     console.log("products", products.length);
     if (!products || products.length === 0) {
       return res.status(200).json({
@@ -71,21 +70,7 @@ const getSingleProduct = async (req, res, next) => {
   }
 };
 
-// const searchProduct = async (req, res, next) => {
-//   const searchText = req.query.q;
-//   console.log(searchText);
-//   try {
-//     const results = await Products.find({ $text: { $search: searchText } });
-//     if (!results)
-//       throw createHttpError.NotFound({ message: "Product Not Found!" });
-//     res.send({ success: true, data: results });
-//   } catch (error) {
-//     console.log("Error fetching Product", error);
-//   }
-// };
-
 module.exports = {
   getAllProducts,
   getSingleProduct,
-  // searchProduct
 };

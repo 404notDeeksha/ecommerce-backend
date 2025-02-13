@@ -1,4 +1,3 @@
-// controllers/carouselController.js
 const Carousel = require("../models/Carousel.model");
 
 //  /api/carousel/featured

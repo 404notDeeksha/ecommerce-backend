@@ -1,39 +1,32 @@
 const Cart = require("../models/Cart.model");
 
-// ADD TO CART
+
 // POST/api/cart
 const addCartItems = async (req, res) => {
   const { userId, items } = req.body;
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
-      // Create a new cart if it doesn't exist
+    
       cart = new Cart({ userId, items });
     } else {
-      // Add new items (new Product id) to the cart
-      // if you already have the productId in cart, update the qty from user
+      
       items.forEach((newItem) => {
         const index = cart.items.findIndex(
           (item) => item.productId === newItem.productId
         );
-        // console.log("Index of item found (item alraedy exists at) ", index);
-        // console.log(`cart exists of user ${userId} and adding item`);
+       
         if (index === -1) {
-          // Add the new item to the cart
+          
           cart.items.push(newItem);
         } else {
           cart.items[index].quantity =
             newItem.quantity || cart.items[index].quantity;
-          // console.log(
-          //   "NEW QTY UPDATED",
-          //   cart.items[index].quantity,
-          //   newItem.quantity,
-          //   cart.items[index].quantity
-          // );
+         
         }
       });
     }
-    // console.log("PRESENT CART", cart);
+   
     await cart.save();
 
     res.status(200).json({
@@ -48,11 +41,11 @@ const addCartItems = async (req, res) => {
   }
 };
 
-// Update Cart Item
+
 //  PUT/api/cart
 const updateCartQty = async (req, res) => {
   const { userId, productId, quantity } = req.params;
-  console.log("Params of PUT request", req.params);
+  
 
   if (!userId || !productId || quantity === undefined) {
     return res.status(400).json({
@@ -81,7 +74,6 @@ const updateCartQty = async (req, res) => {
       cartItem.quantity = quantity;
     }
 
-    // Save the updated cart to the database
     await cart.save();
     res.status(200).json({
       success: true,
@@ -95,7 +87,7 @@ const updateCartQty = async (req, res) => {
   }
 };
 
-// Get Cart for a Specific User
+
 //   /api/cart/:userId
 const getCart = async (req, res) => {
   const { userId } = req.params;
@@ -116,12 +108,10 @@ const getCart = async (req, res) => {
   }
 };
 
-//   Delete an Item from the Cart
+
 //   DELETE/api/cart/:productId
 const deleteCartItem = async (req, res) => {
-  // console.log("Params:", req.params);
   const { userId, productId } = req.params;
-  // console.log("DELETE cart", userId, productId);
 
   try {
     const cart = await Cart.findOne({ userId });

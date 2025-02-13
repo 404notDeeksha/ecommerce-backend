@@ -14,9 +14,6 @@ const cartItemSchema = new mongoose.Schema({
   productDescription: {
     type: String, // Matches the ProductDescription in the Product model
   },
-  // category: {
-  //   type: String, // Matches the Category in the Product model
-  // },
   price: {
     type: Number, // Matches the Price in the Product model
     required: true,
@@ -24,15 +21,9 @@ const cartItemSchema = new mongoose.Schema({
   brand: {
     type: String, // Matches the Brand in the Product model
   },
-  // modelName: {
-  //   type: String, // Matches the ModelName in the Product model
-  // },
   colour: {
     type: String, // Matches the Colour in the Product model
   },
-  // itemDimensions: {
-  //   type: String, // Matches the ItemDimensions in the Product model
-  // },
   images: {
     type: [String], // Matches the Images in the Product model
   },
