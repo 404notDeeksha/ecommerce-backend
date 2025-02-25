@@ -25,6 +25,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.send("Hello, world!");
+});
 app.use("/api", router);
 
 const port = process.env.PORT || 8001;
@@ -32,3 +35,5 @@ const port = process.env.PORT || 8001;
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+module.exports = app;

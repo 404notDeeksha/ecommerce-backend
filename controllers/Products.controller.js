@@ -35,7 +35,6 @@ const getAllProducts = async (req, res, next) => {
 
     const products = await Products.find(query);
 
-    console.log("products", products.length);
     if (!products || products.length === 0) {
       return res.status(200).json({
         success: false,
@@ -52,7 +51,6 @@ const getAllProducts = async (req, res, next) => {
 
 //  GET /api/products/product/:id
 const getSingleProduct = async (req, res, next) => {
-  console.log("hey3", req.params.id);
   try {
     const product = await Products.findOne({ productId: req.params.id });
     if (!product)
