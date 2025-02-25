@@ -57,7 +57,6 @@ const signupUser = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("User's Email", email);
     const [user] = await User.find({ email: email });
 
     if (user) {
@@ -79,10 +78,8 @@ const verifyEmail = async (req, res) => {
 const verifyPassword = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Email auth", email, password);
 
     const user = await User.findOne({ email });
-    console.log("User auth", user);
 
     if (!user) {
       return res
@@ -148,7 +145,6 @@ const logoutUser = (req, res) => {
 // GET api/user/refresh
 const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  console.log("REFERSH TOKEN", refreshToken);
   if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
 
   try {

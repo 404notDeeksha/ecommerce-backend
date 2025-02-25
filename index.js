@@ -8,21 +8,22 @@ dbConnection();
 
 const app = express();
 
-// Enable CORS middleware before all routes
 app.use(
   cors({
-    origin: "http://localhost:5173", // Frontend origin
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      process.env.FRONTEND_URL,
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
-// Body parser middleware for JSON and URL encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Routes
 app.use(cookieParser());
 app.use("/api", router);
 

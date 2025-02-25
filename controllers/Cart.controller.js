@@ -54,14 +54,11 @@ const updateCartQty = async (req, res) => {
   }
 
   try {
-    // Find the cart for the user
     const cart = await Cart.findOne({ userId });
-    // console.log("CART FOUND", cart);
     if (!cart) {
       return res.status(404).json({ error: "Cart not found for the user." });
     }
 
-    // Find the product in the cart
     const cartItem = cart.items.find(
       (item) => item.productId.toString() === productId
     );

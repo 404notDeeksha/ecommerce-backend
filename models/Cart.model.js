@@ -4,48 +4,47 @@ const { v4: uuidv4 } = require("uuid");
 // Define the schema for cart items
 const cartItemSchema = new mongoose.Schema({
   productId: {
-    type: String, // Matches the ProductId in the Product model
+    type: String,
     required: true,
   },
   productName: {
-    type: String, // Matches the ProductName in the Product model
+    type: String,
     required: true,
   },
   productDescription: {
-    type: String, // Matches the ProductDescription in the Product model
+    type: String,
   },
   price: {
-    type: Number, // Matches the Price in the Product model
+    type: Number,
     required: true,
   },
   brand: {
-    type: String, // Matches the Brand in the Product model
+    type: String,
   },
   colour: {
-    type: String, // Matches the Colour in the Product model
+    type: String,
   },
   images: {
-    type: [String], // Matches the Images in the Product model
+    type: [String],
   },
   quantity: {
-    type: Number, // Quantity of this product in the cart
+    type: Number,
     required: true,
     min: 1,
   },
 });
 
-// Define the schema for the cart
 const cartSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
-      default: uuidv4, // Automatically generate a unique UUID
-      unique: true, // Ensure uniqueness in the database
-      index: true, // Index this field for faster queries
+      default: uuidv4,
+      unique: true,
+      index: true,
     },
-    items: [cartItemSchema], // Array of cart items
+    items: [cartItemSchema],
     totalPrice: {
-      type: Number, // Total price of all items in the cart
+      type: Number,
       required: true,
       default: 0,
     },
@@ -53,13 +52,11 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Calculate the total price before saving the cart
 cartSchema.pre("save", function (next) {
   this.totalPrice = this.items.reduce(
     (total, item) => total + item.quantity * item.price,
     0
   );
-  console.log("Total price", this.totalPrice);
   next();
 });
 

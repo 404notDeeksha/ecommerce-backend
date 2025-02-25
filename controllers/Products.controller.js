@@ -2,12 +2,9 @@ const Products = require("../models/Products.model");
 
 //   GET /api/products?filter
 const getAllProducts = async (req, res, next) => {
-  // console.log("CALLING ALL PRODUCTS");
   try {
-    // Extract filters dynamically from query parameters
     const filters = req.query;
 
-    // Build the dynamic query
     const query = {};
 
     if (filters.category) {
@@ -33,10 +30,9 @@ const getAllProducts = async (req, res, next) => {
     }
 
     if (filters.brand) {
-      query.brand = { $in: filters.brand.split(",") }; // Support multiple brands
+      query.brand = { $in: filters.brand.split(",") };
     }
 
-    // Fetch filtered products from database
     const products = await Products.find(query);
 
     console.log("products", products.length);
@@ -59,7 +55,6 @@ const getSingleProduct = async (req, res, next) => {
   console.log("hey3", req.params.id);
   try {
     const product = await Products.findOne({ productId: req.params.id });
-    console.log("product found", product);
     if (!product)
       return res
         .status(404)
