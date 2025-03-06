@@ -7,6 +7,13 @@ const router = require("./routes/index.routes");
 const mongoose = require("mongoose");
 dbConnection();
 
+try {
+  const dbConnection = require("./config/DbConnection");
+  console.log("DbConnection module loaded successfully");
+} catch (err) {
+  console.error("Failed to load DbConnection:", err);
+}
+
 const app = express();
 
 app.use(
@@ -30,14 +37,14 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-app.get("/test-db", async (req, res) => {
-  try {
-    const result = await mongoose.connection.db.admin().ping();
-    res.send("MongoDB connected successfully");
-  } catch (err) {
-    res.status(500).send("Failed to connect to MongoDB");
-  }
-});
+// app.get("/test-db", async (req, res) => {
+//   try {
+//     const result = await mongoose.connection.db.admin().ping();
+//     res.send("MongoDB connected successfully");
+//   } catch (err) {
+//     res.status(500).send("Failed to connect to MongoDB");
+//   }
+// });
 
 app.use("/api", router);
 
