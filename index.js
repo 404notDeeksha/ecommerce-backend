@@ -4,7 +4,7 @@ const dbConnection = require("./config/DbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 dbConnection();
 console.log("DIRECTORY_NAME", __dirname);
 
