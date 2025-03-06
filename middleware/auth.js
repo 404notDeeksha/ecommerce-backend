@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_KEY);
     req.user = decoded.userId;
-    return next(); 
+    return next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
       console.log("Access token expired. Checking refresh token...");
@@ -34,7 +34,7 @@ const authMiddleware = (req, res, next) => {
         const newAccessToken = jwt.sign(
           { userId: refreshDecoded.userId },
           process.env.JWT_ACCESS_KEY,
-          { expiresIn: "15m" } 
+          { expiresIn: "15m" }
         );
 
         res.cookie("accessToken", newAccessToken, {
@@ -44,7 +44,7 @@ const authMiddleware = (req, res, next) => {
         });
 
         req.user = refreshDecoded.userId;
-        return next(); 
+        return next();
       } catch (refreshErr) {
         console.log("Invalid refresh token", refreshErr);
         return res.status(403).json({

@@ -10,7 +10,7 @@ console.log("🟢 Server is starting...");
 
 dbConnection();
 
-console.log("Expected DbConnection path:");
+// console.log("Expected DbConnection path:");
 
 const app = express();
 
