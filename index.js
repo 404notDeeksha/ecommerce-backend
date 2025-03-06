@@ -11,10 +11,7 @@ console.log("Current Working Directory:", process.cwd());
 
 dbConnection();
 
-console.log(
-  "Expected DbConnection path:",
-  require.resolve("./config/DbConnection")
-);
+console.log("Expected DbConnection path:");
 
 const app = express();
 
