@@ -57,6 +57,7 @@ const signupUser = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("Login-email", email);
     const [user] = await User.find({ email: email });
 
     if (user) {
