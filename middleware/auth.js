@@ -40,11 +40,12 @@ const authMiddleware = (req, res, next) => {
         res.cookie("accessToken", newAccessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
+          sameSite: "none",
         });
 
         req.user = refreshDecoded.userId;
         return next();
+        
       } catch (refreshErr) {
         console.log("Invalid refresh token", refreshErr);
         return res.status(403).json({
