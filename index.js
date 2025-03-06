@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
 const mongoose = require("mongoose");
 dbConnection();
+console.log("DIRECTORY_NAME", __dirname);
 
 try {
   const dbConnection = require("./config/DbConnection");
@@ -36,15 +37,6 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
-
-// app.get("/test-db", async (req, res) => {
-//   try {
-//     const result = await mongoose.connection.db.admin().ping();
-//     res.send("MongoDB connected successfully");
-//   } catch (err) {
-//     res.status(500).send("Failed to connect to MongoDB");
-//   }
-// });
 
 app.use("/api", router);
 
