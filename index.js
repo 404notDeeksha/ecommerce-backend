@@ -33,11 +33,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
-app.get("/", (req, res) => {
-  res.send("Hello, world!");
+app.get("/api/test", (req, res) => {
+  console.log("🔵 /api/test route hit!");
+  res.json({ message: "API is working!" });
 });
 
 app.use("/api", router);
+
+console.log("Current Working Directory:", process.cwd());
+console.log("Environment Variables:", process.env);
 
 const port = process.env.PORT || 8001;
 
