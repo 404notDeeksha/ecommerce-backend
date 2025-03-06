@@ -38,12 +38,17 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
 });
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
+
 app.use("/api", router);
 
 console.log("Current Working Directory:", process.cwd());
 console.log("Environment Variables:", process.env);
 
-const port = process.env.PORT || 8001;
+// const port = process.env.PORT || 8001;
 
 // app.listen(port, () => {
 //   console.log(`Server is running at http://localhost:${port}`);
