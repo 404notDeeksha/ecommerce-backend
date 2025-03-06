@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authMiddleware = (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   const refreshToken = req.cookies.refreshToken;
-
+  console.log("Token-err");
   if (!accessToken) {
     return res.status(401).json({
       success: false,
@@ -45,7 +45,6 @@ const authMiddleware = (req, res, next) => {
 
         req.user = refreshDecoded.userId;
         return next();
-        
       } catch (refreshErr) {
         console.log("Invalid refresh token", refreshErr);
         return res.status(403).json({

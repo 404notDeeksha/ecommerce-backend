@@ -2,6 +2,7 @@ const Products = require("../models/Products.model");
 
 //   GET /api/products?filter
 const getAllProducts = async (req, res, next) => {
+  console.log("Reached Products");
   try {
     const filters = req.query;
 
