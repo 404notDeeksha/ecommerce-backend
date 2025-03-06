@@ -5,15 +5,10 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
 console.log("DIRECTORY_NAME", __dirname);
+console.log("🟢 Server is starting...");
 
 dbConnection();
 
-// try {
-//   const dbConnection = require("./config/DbConnection");
-//   console.log("DbConnection module loaded successfully");
-// } catch (err) {
-//   console.error("Failed to load DbConnection:", err);
-// }
 console.log(
   "Expected DbConnection path:",
   require.resolve("./config/DbConnection")
