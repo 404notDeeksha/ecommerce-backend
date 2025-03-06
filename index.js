@@ -14,6 +14,10 @@ try {
 } catch (err) {
   console.error("Failed to load DbConnection:", err);
 }
+console.log(
+  "Expected DbConnection path:",
+  require.resolve("./config/DbConnection")
+);
 
 const app = express();
 
