@@ -4,10 +4,9 @@ const dbConnection = require("./config/dbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
-console.log("DIRECTORY_NAME", __dirname);
+// console.log("DIRECTORY_NAME", __dirname);
 console.log("🟢 Server is starting...");
-console.log("Current Working Directory:", process.cwd());
-// console.log("Environment Variables:", process.env);
+// console.log("Current Working Directory:", process.cwd());
 
 dbConnection();
 
