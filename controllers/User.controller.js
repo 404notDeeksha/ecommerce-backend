@@ -100,14 +100,14 @@ const verifyPassword = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true, // Prevent client-side JS from accessing it
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict", // Prevent CSRF
+      sameSite: "none", // Prevent CSRF
       maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
     });
 
