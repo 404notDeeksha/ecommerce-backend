@@ -4,16 +4,16 @@ const dbConnection = require("./config/DbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
-// const mongoose = require("mongoose");
-dbConnection();
 console.log("DIRECTORY_NAME", __dirname);
 
-try {
-  const dbConnection = require("./config/DbConnection");
-  console.log("DbConnection module loaded successfully");
-} catch (err) {
-  console.error("Failed to load DbConnection:", err);
-}
+dbConnection();
+
+// try {
+//   const dbConnection = require("./config/DbConnection");
+//   console.log("DbConnection module loaded successfully");
+// } catch (err) {
+//   console.error("Failed to load DbConnection:", err);
+// }
 console.log(
   "Expected DbConnection path:",
   require.resolve("./config/DbConnection")
