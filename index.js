@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
 console.log("DIRECTORY_NAME", __dirname);
 console.log("🟢 Server is starting...");
+console.log("Current Working Directory:", process.cwd());
+// console.log("Environment Variables:", process.env);
 
 dbConnection();
 
@@ -44,9 +46,6 @@ app.use((err, req, res, next) => {
 });
 
 app.use("/api", router);
-
-console.log("Current Working Directory:", process.cwd());
-console.log("Environment Variables:", process.env);
 
 // const port = process.env.PORT || 8001;
 
