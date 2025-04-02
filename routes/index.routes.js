@@ -8,8 +8,20 @@ const CartRouter = require("./Cart.routes");
 const CarouselRouter = require("./Carousel.routes");
 
 router.use("/user", userRouter);
-router.use("/carousel", authMiddleware, CarouselRouter);
-router.use("/products", authMiddleware, ProductRouter);
-router.use("/cart", authMiddleware, CartRouter);
+router.use(
+  "/carousel",
+  // authMiddleware,
+  CarouselRouter
+);
+router.use(
+  "/products",
+  // authMiddleware,
+  ProductRouter
+);
+router.use(
+  "/cart",
+  //  authMiddleware,
+  CartRouter
+);
 
 module.exports = router;
