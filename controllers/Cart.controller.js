@@ -1,32 +1,27 @@
 const Cart = require("../models/Cart.model");
 
-
 // POST/api/cart
 const addCartItems = async (req, res) => {
   const { userId, items } = req.body;
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
-    
       cart = new Cart({ userId, items });
     } else {
-      
       items.forEach((newItem) => {
         const index = cart.items.findIndex(
           (item) => item.productId === newItem.productId
         );
-       
+
         if (index === -1) {
-          
           cart.items.push(newItem);
         } else {
           cart.items[index].quantity =
             newItem.quantity || cart.items[index].quantity;
-         
         }
       });
     }
-   
+
     await cart.save();
 
     res.status(200).json({
@@ -41,11 +36,9 @@ const addCartItems = async (req, res) => {
   }
 };
 
-
 //  PUT/api/cart
 const updateCartQty = async (req, res) => {
   const { userId, productId, quantity } = req.params;
-  
 
   if (!userId || !productId || quantity === undefined) {
     return res.status(400).json({
@@ -84,7 +77,6 @@ const updateCartQty = async (req, res) => {
   }
 };
 
-
 //   /api/cart/:userId
 const getCart = async (req, res) => {
   const { userId } = req.params;
@@ -105,6 +97,29 @@ const getCart = async (req, res) => {
   }
 };
 
+// GET /api/cart/quantity/:userId
+const getCartQty = async (req, res) => {
+  try {
+    const { userId } = req.params; // Get user ID from authentication middleware
+
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
+
+    const totalQuantity =
+      cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+
+    res.status(200).json({ success: true, data: totalQuantity });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching cart quantity", data: error });
+  }
+};
 
 //   DELETE/api/cart/:productId
 const deleteCartItem = async (req, res) => {
@@ -140,5 +155,6 @@ module.exports = {
   addCartItems,
   updateCartQty,
   getCart,
+  getCartQty,
   deleteCartItem,
 };
