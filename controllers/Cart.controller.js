@@ -81,37 +81,51 @@ const updateCartQty = async (req, res) => {
 const getCart = async (req, res) => {
   const { userId } = req.params;
 
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User ID is required" });
+  }
+
   try {
-    const cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId });
+
     if (!cart) {
-      cart = { userId, items: [], totalPrice: 0 };
+      console.log("Cart not found, creating a new one.");
+      cart = await Cart.create({
+        userId,
+        items: [],
+        totalPrice: 0,
+      });
     }
+
     res.status(200).json({ success: true, data: cart });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error fetching cart", data: error });
+    console.error("Error fetching cart:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 const getCartQty = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.params; // Get user ID from request params
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required" });
+    }
 
     const cart = await Cart.findOne({ userId });
 
-    if (!cart) {
-      return res.status(200).json({ success: true, data: 0 });
-    }
-
-    const totalQuantity =
-      cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+    const totalQuantity = cart
+      ? cart.items.reduce((acc, item) => acc + item.quantity, 0)
+      : 0;
 
     res.status(200).json({ success: true, data: totalQuantity });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching cart quantity", data: error });
+    console.error("Error fetching cart quantity:", error); // Log the error for debugging
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
