@@ -5,7 +5,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
 const env = require("./config/envValidator");
-console.log("🟢 Server is starting...");
 
 dbConnection();
 
@@ -15,8 +14,6 @@ const allowedOrigins = [env.FRONTEND_URL, env.DEV_FRONTEND_URL];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log(origin);
-    console.log(allowedOrigins.includes(origin));
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -25,7 +22,7 @@ const corsOptions = {
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // ✅ Allows cookies, tokens, sessions
+  credentials: true, //
 };
 
 app.use(cors(corsOptions));
@@ -37,11 +34,6 @@ app.use(cookieParser());
 app.get("/api/test", (req, res) => {
   console.log("🔵 /api/test route hit!");
   res.json({ message: "API is working!" });
-});
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
 });
 
 app.use("/api", router);

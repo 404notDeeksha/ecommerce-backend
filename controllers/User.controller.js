@@ -1,6 +1,5 @@
-const User = require("../models/User.model");
+const User = require("../models/User.model.js");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
 // POST api/user/signup - create user account
 const signupUser = async (req, res) => {
@@ -23,27 +22,14 @@ const signupUser = async (req, res) => {
     });
     await user.save();
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true, // Prevent client-side JS from accessing it
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict", // Prevent CSRF
-      maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
-    });
-
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: { id: user.userId, name: user.name, email: user.email },
+      data: {
+        id: user.userId,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
     res.status(404).json({
@@ -57,7 +43,6 @@ const signupUser = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("Login-email", email);
     const [user] = await User.find({ email: email });
 
     if (user) {
@@ -95,27 +80,14 @@ const verifyPassword = async (req, res) => {
         .status(400)
         .json({ success: false, error: "Invalid credentials" });
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true, // Prevent client-side JS from accessing it
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "none", // Prevent CSRF
-      maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
-    });
-
     res.status(201).json({
       success: true,
       message: "Login successful",
-      user: { id: user.userId, name: user.name, email: user.email },
+      user: {
+        id: user.userId,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error" });
@@ -125,61 +97,10 @@ const verifyPassword = async (req, res) => {
 // POST api/user/logout
 const logoutUser = (req, res) => {
   try {
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-    });
-
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-    });
-
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (err) {
-    console.log("Cookie cant be deleted", err);
+    console.log(err);
   }
-};
-
-// GET api/user/refresh
-const refreshToken = async (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) return res.status(401).json({ message: "Unauthorized" });
-
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
-
-    const newAccessToken = jwt.sign(
-      { userId: decoded.userId },
-      process.env.JWT_ACCESS_KEY,
-      { expiresIn: "15m" }
-    );
-
-    res.cookie("accessToken", newAccessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
-    });
-
-    res.json({ message: "Token refreshed" });
-  } catch (error) {
-    return res.status(403).json({ message: "Invalid refresh token" });
-  }
-};
-
-const generateAccessToken = (user) => {
-  return jwt.sign({ userId: user.userId }, process.env.JWT_ACCESS_KEY, {
-    expiresIn: "15m",
-  });
-};
-
-const generateRefreshToken = (user) => {
-  return jwt.sign({ userId: user.userId }, process.env.JWT_REFRESH_KEY, {
-    expiresIn: "7d",
-  });
 };
 
 module.exports = {
@@ -187,5 +108,4 @@ module.exports = {
   verifyEmail,
   verifyPassword,
   logoutUser,
-  refreshToken,
 };
