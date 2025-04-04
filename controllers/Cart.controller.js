@@ -84,9 +84,7 @@ const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Cart not found" });
+      cart = { userId, items: [], totalPrice: 0 };
     }
     res.status(200).json({ success: true, data: cart });
   } catch (error) {
@@ -96,21 +94,18 @@ const getCart = async (req, res) => {
   }
 };
 
-// GET /api/cart/quantity/:userId
 const getCartQty = async (req, res) => {
   try {
-    const { userId } = req.params; // Get user ID from authentication middleware
+    const { userId } = req.params;
 
     const cart = await Cart.findOne({ userId });
 
     if (!cart) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Cart not found" });
+      return res.status(200).json({ success: true, data: 0 });
     }
 
     const totalQuantity =
-      cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+      cart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
     res.status(200).json({ success: true, data: totalQuantity });
   } catch (error) {
