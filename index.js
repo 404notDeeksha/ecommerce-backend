@@ -4,28 +4,28 @@ const dbConnection = require("./config/dbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
-// console.log("DIRECTORY_NAME", __dirname);
-console.log("🟢 Server is starting...");
-// console.log("Current Working Directory:", process.cwd());
+const env = require("./config/envValidator");
 
 dbConnection();
 
-// console.log("Expected DbConnection path:");
-
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      process.env.FRONTEND_URL,
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+const allowedOrigins = [env.DEP_FRONTEND_URL, env.DEV_FRONTEND_URL];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS policy: This origin is not allowed"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true, //
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -36,17 +36,12 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "API is working!" });
 });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});
-
 app.use("/api", router);
 
-// const port = process.env.PORT || 8001;
+const port = env.PORT;
 
-// app.listen(port, () => {
-//   console.log(`Server is running at http://localhost:${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
 
 module.exports = app;
