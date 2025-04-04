@@ -89,7 +89,6 @@ const getCart = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
     res.status(200).json({ success: true, data: cart });
-    console.log("CART", cart);
   } catch (error) {
     res
       .status(500)

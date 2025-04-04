@@ -10,7 +10,7 @@ dbConnection();
 
 const app = express();
 
-const allowedOrigins = [env.FRONTEND_URL, env.DEV_FRONTEND_URL];
+const allowedOrigins = [env.DEP_FRONTEND_URL, env.DEV_FRONTEND_URL];
 
 const corsOptions = {
   origin: (origin, callback) => {
