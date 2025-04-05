@@ -12,9 +12,17 @@ const app = express();
 
 const allowedOrigins = [env.DEP_FRONTEND_URL, env.DEV_FRONTEND_URL];
 
+const isVercelPreview = (origin) =>
+  /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin || "");
+
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || isVercelPreview(origin)) {
+      console.log(
+        "CORS policy: Allowing origin:",
+        origin,
+        allowedOrigins.includes(origin)
+      );
       callback(null, true);
     } else {
       callback(new Error("CORS policy: This origin is not allowed"));
