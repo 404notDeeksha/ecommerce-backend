@@ -39,23 +39,38 @@ const signupUser = async (req, res) => {
   }
 };
 
-// POST api/user/emailAuth
+// POST /api/user/emailAuth
 const verifyEmail = async (req, res) => {
   try {
     const { email } = req.body;
-    const [user] = await User.find({ email: email });
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOne({ email });
 
     if (user) {
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
-        message: "User Already Registered. Go to signin page",
+        message: "User already registered. Go to sign-in page.",
         data: user,
       });
     }
-  } catch (err) {
-    res.status(404).json({
+
+    return res.status(404).json({
       success: false,
-      data: err,
+      message: "User not registered. Please sign up.",
+    });
+  } catch (err) {
+    console.error("Error in verifyEmail:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
     });
   }
 };
