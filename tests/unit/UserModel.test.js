@@ -2,6 +2,7 @@ require("../setupTestDB");
 const User = require("../../models/User.model");
 
 //Ensures unique indexes are applied
+// without it, the unique: true in your schema is ignored by the in-memory MongoDB, leading to no error on duplicate save
 beforeAll(async () => {
   await User.syncIndexes(); // Force index creation
 });
