@@ -105,7 +105,7 @@ const verifyPassword = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: error });
   }
 };
 
