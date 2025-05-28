@@ -1,10 +1,8 @@
 require("../setupTestDB");
 const User = require("../../models/User.model");
 
-//Ensures unique indexes are applied
-// without it, the unique: true in your schema is ignored by the in-memory MongoDB, leading to no error on duplicate save
 beforeAll(async () => {
-  await User.syncIndexes(); // Force index creation
+  await User.syncIndexes(); 
 });
 
 
@@ -52,7 +50,7 @@ it('should trim the name field', async () => {
     expect(user.userId).toBeDefined();
     expect(user.userId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    ); // UUID v4 regex
+    ); 
   });
 
   it('should fail if password is less than 6 characters', async () => {
