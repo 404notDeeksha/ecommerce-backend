@@ -26,7 +26,31 @@ describe("Cart Model", () => {
     expect(savedCart._id).toBeDefined();
     expect(savedCart.items.length).toBe(2);
     expect(savedCart.totalPrice).toBe(2200);
+});
 
-
+    it("should not allow quantity less than 1", async () => {
+        const cart = new Cart({
+          items: [
+            {
+              productId: "P003",
+              productName: "Shoes",
+              price: 1000,
+              quantity: 0,
+            },
+          ],
+        });
+    
+        let error;
+        try {
+          await cart.save();
+        } catch (e) {
+          error = e;
+        }
+    
+        expect(error).toBeDefined();
+        expect(error.errors["items.0.quantity"].kind).toBe("min");
   });
+
+
+
 });
