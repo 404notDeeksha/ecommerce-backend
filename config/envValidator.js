@@ -12,8 +12,9 @@ if (missingVars.length > 0) {
   console.error(`🚨 Missing environment variables: ${missingVars.join(", ")}`);
   process.exit(1);
 }
-
-console.log("✅ All required environment variables are set.");
+if (process.env.NODE_ENV !== "test") {
+  console.log("✅ All required environment variables are set.");
+}
 
 module.exports = {
   PORT: process.env.PORT || 8001,

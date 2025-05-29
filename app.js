@@ -1,12 +1,8 @@
 const express = require("express");
-// require("dotenv").config();
-// const dbConnection = require("./config/dbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/index.routes");
 const env = require("./config/envValidator");
-
-// dbConnection();
 
 const app = express();
 
@@ -18,11 +14,13 @@ const isVercelPreview = (origin) =>
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin) || isVercelPreview(origin)) {
-      console.log(
-        "CORS policy: Allowing origin:",
-        origin,
-        allowedOrigins.includes(origin)
-      );
+      if (process.env.NODE_ENV !== "test") {
+        console.log(
+          "CORS policy: Allowing origin:",
+          origin,
+          allowedOrigins.includes(origin)
+        );
+      }
       callback(null, true);
     } else {
       callback(new Error("CORS policy: This origin is not allowed"));
@@ -46,11 +44,5 @@ app.get("/api/test", (req, res) => {
 });
 
 app.use("/api", router);
-
-// const port = env.PORT;
-
-// app.listen(port, () => {
-//   console.log(`Server is running at http://localhost:${port}`);
-// });
 
 module.exports = app;
