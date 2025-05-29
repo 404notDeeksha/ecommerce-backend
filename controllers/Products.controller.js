@@ -1,7 +1,7 @@
 const Products = require("../models/Products.model");
 
 //   GET /api/products?filter
-const getAllProducts = async (req, res, next) => {
+const getAllProducts = async (req, res) => {
   try {
     const filters = req.query;
 
@@ -50,7 +50,7 @@ const getAllProducts = async (req, res, next) => {
 };
 
 //  GET /api/products/product/:id
-const getSingleProduct = async (req, res, next) => {
+const getSingleProduct = async (req, res) => {
   try {
     const product = await Products.findOne({ productId: req.params.id });
     if (!product)
