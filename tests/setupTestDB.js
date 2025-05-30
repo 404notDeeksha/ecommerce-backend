@@ -6,7 +6,7 @@ let mongoServer;
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
-  await mongoose.connect(uri);
+  await mongoose.connect(uri, { dbName: "test" });
 });
 
 afterAll(async () => {

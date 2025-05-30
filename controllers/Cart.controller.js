@@ -106,6 +106,7 @@ const getCart = async (req, res) => {
   }
 };
 
+//GET /api/cart/quantity/:userId
 const getCartQty = async (req, res) => {
   try {
     const { userId } = req.params; // Get user ID from request params
